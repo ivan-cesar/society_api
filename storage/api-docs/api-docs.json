@@ -1,0 +1,718 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SOCIETY API",
+        "version": "0.1"
+    },
+    "paths": {
+        "App\\Http\\Controllers": {},
+        "/admin/clients": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get the list of clients",
+                "description": "Get the list of clients.",
+                "operationId": "d982a0b9d7387d6bb2ae8ed310783f61",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "clients": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/claims/{claimId}": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Handle client claim",
+                "description": "Handle client claim.",
+                "operationId": "261a5dabd03119590f472978b0e5b083",
+                "parameters": [
+                    {
+                        "name": "claimId",
+                        "in": "path",
+                        "description": "ID of the claim",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Claim handled successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/claims": {
+            "get": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Get the list of claims",
+                "description": "Get the list of claims.",
+                "operationId": "fc7aec9ba4831f79887a54de874077f8",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "claims": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Claim"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Create a new claim",
+                "description": "Create a new claim.",
+                "operationId": "25c757a10d826053a0749983da72d74b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer"
+                                    },
+                                    "subject": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Claim submitted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/claims/{claimId}": {
+            "get": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Get the details of a claim",
+                "description": "Get the details of a claim.",
+                "operationId": "eb3548b8d6f4eb668d9ca7cf9b4db9ae",
+                "parameters": [
+                    {
+                        "name": "claimId",
+                        "in": "path",
+                        "description": "ID of the claim",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "claim": {
+                                            "$ref": "#/components/schemas/Claim"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Claim not found"
+                    }
+                }
+            }
+        },
+        "/operations": {
+            "get": {
+                "tags": [
+                    "Operations"
+                ],
+                "summary": "Get the list of operations",
+                "description": "Get the list of operations for the authenticated user.",
+                "operationId": "c00ff143b1c26442f6b456b17e91ab97",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "operations": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Operation"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Operations"
+                ],
+                "summary": "Create a new operation",
+                "description": "Create a new operation.",
+                "operationId": "6abbf32e037d27324d4f5ca5946bce4d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operation recorded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/user/inscription": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Register a new user",
+                "description": "Register a new user.",
+                "operationId": "c7ddf0fd0e9521bd8547f1e1501ce4df",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserInscriptionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/user/connexion": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "User login",
+                "description": "User login.",
+                "operationId": "7ea95a3362b982e1d5f901b9ba11d6e1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserConnexionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged in successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "utilisateur": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/wallet/reload": {
+            "post": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Reload the user's electronic wallet",
+                "description": "Reload the user's electronic wallet.",
+                "operationId": "c75e99a320bad72a762a54fab690d8fd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Wallet reloaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/wallet/transfer": {
+            "post": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Transfer money to another user",
+                "description": "Transfer money to another user.",
+                "operationId": "451ec589560eca8970ba8f2dd7a4a408",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "recipient_id": {
+                                        "type": "integer"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transfer successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/wallet/pay": {
+            "post": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Make a payment for goods or services",
+                "description": "Make a payment for goods or services.",
+                "operationId": "fa872c031d50f9cc4df9d8e8490116b2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Claim": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "subject": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Operation": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "integer"
+                    },
+                    "recipient_id": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserInscriptionRequest": {
+                "properties": {
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenoms": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "password_confirmation": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserConnexionRequest": {
+                "properties": {
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "nom": {
+                        "type": "string"
+                    },
+                    "prenoms": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Wallet": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "number"
+                    },
+                    "recipient_id": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "bearerAuth",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Admin",
+            "description": "Opérations liées à la fonctionnalité d'administration"
+        },
+        {
+            "name": "Claim",
+            "description": "Operations related to claims"
+        },
+        {
+            "name": "Operations",
+            "description": "Operations related to user operations"
+        },
+        {
+            "name": "User",
+            "description": "Operations related to user management"
+        },
+        {
+            "name": "Wallet",
+            "description": "Operations related to user wallet"
+        }
+    ]
+}
