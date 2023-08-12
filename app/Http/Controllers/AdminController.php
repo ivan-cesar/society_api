@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Claim;
 use Illuminate\Http\Request;
 use App\Models\User;
 /**
@@ -15,7 +16,7 @@ class AdminController extends Controller
     * Get the list of clients.
     *
     * @OA\Get(
-    *     path="/admin/clients",
+    *     path="/api/admin/clients",
     *     summary="Get the list of clients",
     *     tags={"Admin"},
     *     security={{"bearerAuth":{}}},
@@ -44,7 +45,7 @@ class AdminController extends Controller
      * Handle client claim.
      *
      * @OA\Post(
-     *     path="/admin/claims/{claimId}",
+     *     path="/api/admin/claims/{claimId}",
      *     summary="Handle client claim",
      *     tags={"Admin"},
      *     security={{"bearerAuth":{}}},
@@ -70,13 +71,40 @@ class AdminController extends Controller
     {
         // Vérifier si l'utilisateur authentifié est un administrateur
         if (auth()->user()->is_admin) {
-            // Traiter la réclamation avec l'ID $claimId selon vos besoins
-            // ...
+            // Récupérer la réclamation en fonction de l'ID
+            $claim = Claim::findOrFail($claimId);
+
+            // Mettre à jour le statut de la réclamation
+            $claim->status = 'processed'; 
 
             return response()->json(['message' => 'Claim handled successfully'], 200);
         } else {
             return response()->json(['message' => 'Access denied'], 403);
         }
+    }
+/**
+    * Get the list of claims.
+    *
+    * @OA\Get(
+    *     path="/api/admin/claims",
+    *     summary="Get the list of claims",
+    *     tags={"Admin"},
+    *     security={{"bearerAuth":{}}},
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successful response",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="claims", type="array", @OA\Items(ref="#/components/schemas/User"))
+    *         )
+    *     ),
+    *     @OA\Response(response=403, description="Access denied")
+    * )
+    */
+    // Obtenir la liste des réclamations
+    public function index()
+    {
+        $claims = Claim::all();
+        return response()->json(['claims' => $claims], 200);
     }
 
 }

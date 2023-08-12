@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Claim;
+use Illuminate\Support\Facades\Auth;
+
 /**
  * @OA\Tag(
  *     name="Claim",
@@ -28,9 +30,10 @@ class ClaimController extends Controller
      * Create a new claim.
      *
      * @OA\Post(
-     *     path="/claims",
+     *     path="/api/user/claims",
      *     summary="Create a new claim",
      *     tags={"Claim"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -57,9 +60,9 @@ class ClaimController extends Controller
             'subject' => 'required|string',
             'description' => 'required|string',
         ]);
-
+        $user = Auth::user();
         $claim = new Claim();
-        $claim->user_id = $request->user_id;
+        $claim->user_id = $user->id;
         $claim->subject = $request->subject;
         $claim->description = $request->description;
         $claim->save();
@@ -70,8 +73,9 @@ class ClaimController extends Controller
      * Get the list of claims.
      *
      * @OA\Get(
-     *     path="/claims",
+     *     path="/api/user/claims",
      *     summary="Get the list of claims",
+     *     security={{"bearerAuth": {}}},
      *     tags={"Claim"},
      *     @OA\Response(
      *         response=200,
@@ -85,7 +89,7 @@ class ClaimController extends Controller
     // Obtenir la liste des réclamations
     public function index()
     {
-        $claims = Claim::all();
+        $claims = Claim::where("user_id", Auth::user())->all();
         return response()->json(['claims' => $claims], 200);
     }
 
@@ -93,9 +97,10 @@ class ClaimController extends Controller
      * Get the details of a claim.
      *
      * @OA\Get(
-     *     path="/claims/{claimId}",
+     *     path="/api/admin/claims/{claimId}",
      *     summary="Get the details of a claim",
      *     tags={"Claim"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="claimId",
      *         in="path",

@@ -20,6 +20,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->decimal('wallet_balance', 10, 2)->default(0.00);
+            $table->string('card_number')->nullable();
+            $table->string('expiration_date')->nullable();
+            $table->string('cvv')->nullable();
+            $table->string('mobile_money_number')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();

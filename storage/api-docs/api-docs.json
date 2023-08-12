@@ -6,14 +6,14 @@
     },
     "paths": {
         "App\\Http\\Controllers": {},
-        "/admin/clients": {
+        "/api/admin/clients": {
             "get": {
                 "tags": [
                     "Admin"
                 ],
                 "summary": "Get the list of clients",
                 "description": "Get the list of clients.",
-                "operationId": "d982a0b9d7387d6bb2ae8ed310783f61",
+                "operationId": "5803ccc0df8432cd2c5dc7f713614199",
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -44,14 +44,58 @@
                 ]
             }
         },
-        "/admin/claims/{claimId}": {
+        "/api/admin/claims/{claimId}": {
+            "get": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Get the details of a claim",
+                "description": "Get the details of a claim.",
+                "operationId": "3d38c3a6e2e738c472968b668898d3a0",
+                "parameters": [
+                    {
+                        "name": "claimId",
+                        "in": "path",
+                        "description": "ID of the claim",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "claim": {
+                                            "$ref": "#/components/schemas/Claim"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Claim not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Admin"
                 ],
                 "summary": "Handle client claim",
                 "description": "Handle client claim.",
-                "operationId": "261a5dabd03119590f472978b0e5b083",
+                "operationId": "f23b20826b439a98ea0054c6bb482c11",
                 "parameters": [
                     {
                         "name": "claimId",
@@ -91,14 +135,52 @@
                 ]
             }
         },
-        "/claims": {
+        "/api/admin/claims": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get the list of claims",
+                "description": "Get the list of claims.",
+                "operationId": "0a62c0b07f8985be32f823a876cf96bd",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "claims": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user/claims": {
             "get": {
                 "tags": [
                     "Claim"
                 ],
                 "summary": "Get the list of claims",
                 "description": "Get the list of claims.",
-                "operationId": "fc7aec9ba4831f79887a54de874077f8",
+                "operationId": "9f7bac0378bee814f3860fbbf3d9c77a",
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -118,7 +200,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -126,7 +213,7 @@
                 ],
                 "summary": "Create a new claim",
                 "description": "Create a new claim.",
-                "operationId": "25c757a10d826053a0749983da72d74b",
+                "operationId": "32c4758163ea2cd254da7b53548b56f2",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -167,58 +254,22 @@
                     "400": {
                         "description": "Bad request"
                     }
-                }
-            }
-        },
-        "/claims/{claimId}": {
-            "get": {
-                "tags": [
-                    "Claim"
-                ],
-                "summary": "Get the details of a claim",
-                "description": "Get the details of a claim.",
-                "operationId": "eb3548b8d6f4eb668d9ca7cf9b4db9ae",
-                "parameters": [
+                },
+                "security": [
                     {
-                        "name": "claimId",
-                        "in": "path",
-                        "description": "ID of the claim",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "bearerAuth": []
                     }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "claim": {
-                                            "$ref": "#/components/schemas/Claim"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Claim not found"
-                    }
-                }
+                ]
             }
         },
-        "/operations": {
+        "/api/operations": {
             "get": {
                 "tags": [
                     "Operations"
                 ],
                 "summary": "Get the list of operations",
                 "description": "Get the list of operations for the authenticated user.",
-                "operationId": "c00ff143b1c26442f6b456b17e91ab97",
+                "operationId": "ffc5af52b86d6a637207fa4d35b58b2e",
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -247,70 +298,16 @@
                         "bearerAuth": []
                     }
                 ]
-            },
-            "post": {
-                "tags": [
-                    "Operations"
-                ],
-                "summary": "Create a new operation",
-                "description": "Create a new operation.",
-                "operationId": "6abbf32e037d27324d4f5ca5946bce4d",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "type": {
-                                        "type": "string"
-                                    },
-                                    "amount": {
-                                        "type": "number"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Operation recorded successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
-        "/user/inscription": {
+        "/api/user/inscription": {
             "post": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Register a new user",
                 "description": "Register a new user.",
-                "operationId": "c7ddf0fd0e9521bd8547f1e1501ce4df",
+                "operationId": "3b492c71ae917ccaef7c7c0b28124a67",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -338,14 +335,14 @@
                 }
             }
         },
-        "/user/connexion": {
+        "/api/user/connexion": {
             "post": {
                 "tags": [
                     "User"
                 ],
                 "summary": "User login",
                 "description": "User login.",
-                "operationId": "7ea95a3362b982e1d5f901b9ba11d6e1",
+                "operationId": "69063ea24b3c4224e819fdb8c125f8f5",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -381,14 +378,14 @@
                 }
             }
         },
-        "/wallet/reload": {
+        "/api/wallet/reload": {
             "post": {
                 "tags": [
                     "Wallet"
                 ],
                 "summary": "Reload the user's electronic wallet",
                 "description": "Reload the user's electronic wallet.",
-                "operationId": "c75e99a320bad72a762a54fab690d8fd",
+                "operationId": "73a22dc33f0bfbb69a9cccde409c57f5",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -434,14 +431,14 @@
                 ]
             }
         },
-        "/wallet/transfer": {
+        "/api/wallet/transfer": {
             "post": {
                 "tags": [
                     "Wallet"
                 ],
                 "summary": "Transfer money to another user",
                 "description": "Transfer money to another user.",
-                "operationId": "451ec589560eca8970ba8f2dd7a4a408",
+                "operationId": "16a8c35042c0240bf65581c3c2d89d8c",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -490,14 +487,14 @@
                 ]
             }
         },
-        "/wallet/pay": {
+        "/api/wallet/pay": {
             "post": {
                 "tags": [
                     "Wallet"
                 ],
                 "summary": "Make a payment for goods or services",
                 "description": "Make a payment for goods or services.",
-                "operationId": "fa872c031d50f9cc4df9d8e8490116b2",
+                "operationId": "368ec43c4710ca43e43ed974fe8bb1a3",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -516,6 +513,248 @@
                 "responses": {
                     "200": {
                         "description": "Payment successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/wallet/associate-card": {
+            "post": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Associate a Visa card with the user's wallet",
+                "description": "Associate a Visa card with the user's wallet.",
+                "operationId": "2ff36086097442c2b920649938bc98d3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "card_number": {
+                                        "type": "string"
+                                    },
+                                    "expiration_date": {
+                                        "type": "string"
+                                    },
+                                    "cvv": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Card associated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/wallet/recharge-card": {
+            "post": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Recharge the user's Visa card",
+                "description": "Recharge the user's Visa card.",
+                "operationId": "512e9dbf6af67c9fb89b4c2fa289cf2b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "card_number": {
+                                        "type": "string"
+                                    },
+                                    "expiration_date": {
+                                        "type": "string"
+                                    },
+                                    "cvv": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Card recharged successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/wallet/pay-with-card": {
+            "post": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Make a payment using the user's Visa card",
+                "description": "Make a payment using the user's Visa card.",
+                "operationId": "a00f376925b6f2e7152a6a93de2a85c3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "card_number": {
+                                        "type": "string"
+                                    },
+                                    "expiration_date": {
+                                        "type": "string"
+                                    },
+                                    "cvv": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/wallet/recharge-mobile-money": {
+            "post": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Recharge the user's Visa card using mobile money",
+                "description": "Recharge the user's Visa card using mobile money.",
+                "operationId": "d532e1d006a930274027d4a7c9e691f2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "mobile_money_number": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Card recharged successfully using mobile money",
                         "content": {
                             "application/json": {
                                 "schema": {

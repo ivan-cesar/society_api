@@ -11,8 +11,9 @@ class CreateOperationsTable extends Migration
         Schema::create('operations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('type');
-            $table->decimal('amount', 10, 2);
+            $table->string('card_number')->default("xxxxxx");
+            $table->string('type')->default('aucune operation');
+            $table->decimal('amount', 10, 2)->default(0.00);
             $table->unsignedBigInteger('recipient_id')->nullable();
             $table->timestamps();
 

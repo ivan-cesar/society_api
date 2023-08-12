@@ -28,7 +28,7 @@ class WalletController extends Controller
      * Reload the user's electronic wallet.
      *
      * @OA\Post(
-     *     path="/wallet/reload",
+     *     path="/api/wallet/reload",
      *     summary="Reload the user's electronic wallet",
      *     tags={"Wallet"},
      *     security={{"bearerAuth": {}}},
@@ -76,7 +76,7 @@ class WalletController extends Controller
      * Transfer money to another user.
      *
      * @OA\Post(
-     *     path="/wallet/transfer",
+     *     path="/api/wallet/transfer",
      *     summary="Transfer money to another user",
      *     tags={"Wallet"},
      *     security={{"bearerAuth": {}}},
@@ -124,7 +124,7 @@ class WalletController extends Controller
             // Enregistrer l'opération de transfert dans la table des opérations
             $this->recordOperation($user->id, 'Transfer', $amount, $recipient->id);
 
-            return response()->json(['message' => 'Transfer successful'], 200);
+            return response()->json(['message' => 'Transfer successful to '.$recipient->nom.' '.$recipient->prenoms], 200);
         } else {
             return response()->json(['message' => 'Insufficient balance'], 400);
         }
@@ -133,7 +133,7 @@ class WalletController extends Controller
      * Make a payment for goods or services.
      *
      * @OA\Post(
-     *     path="/wallet/pay",
+     *     path="/api/wallet/pay",
      *     summary="Make a payment for goods or services",
      *     tags={"Wallet"},
      *     security={{"bearerAuth": {}}},
@@ -181,15 +181,259 @@ class WalletController extends Controller
         }
     }
 
-    // Enregistrer une opération dans la table des opérations
-    private function recordOperation($userId, $type, $amount, $recipientId = null)
+        /**
+     * Associate a Visa card with the user's wallet.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Post(
+     *     path="/api/wallet/associate-card",
+     *     summary="Associate a Visa card with the user's wallet",
+     *     tags={"Wallet"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="card_number", type="string"),
+     *             @OA\Property(property="expiration_date", type="string"),
+     *             @OA\Property(property="cvv", type="string"),
+     *             @OA\Property(property="amount", type="number")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Card associated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
+     */
+    public function associateCard(Request $request)
     {
-        $operation = new Operation();
-        $operation->user_id = $userId;
-        $operation->type = $type;
-        $operation->amount = $amount;
-        $operation->recipient_id = $recipientId;
-        $operation->save();
+
+        $this->validate($request, [
+            'card_number' => 'required|string',
+            'expiration_date' => 'required|string',
+            'cvv' => 'required|string',
+            'amount' => 'required|numeric|min:1'
+        ]);
+
+        if (Auth::check()) {
+
+            $user = Auth::user();
+            $card_number = $request->card_number;
+            $amount = $request->amount;
+            $cvv = $request->cvv;
+            $expiration_date = $request->expiration_date;
+            $card_number = $request->card_number;
+            User::where('id', $user->id)->update([
+                "card_number" => $card_number,
+                "expiration_date" => $expiration_date,
+                "cvv" => $cvv,
+                "wallet_balance" => $user->wallet_balance + $amount
+
+
+            ]);
+    
+            // Enregistrer l'opération de recharge dans la table des opérations
+            $this->recordOperation($user->id, 'Associate Card',$card_number, $amount);
+    
+            return response()->json(['message' => 'Card associated successfully'], 200);
+        } else {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+    }
+
+    /**
+     * Recharge the user's Visa card.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Post(
+     *     path="/api/wallet/recharge-card",
+     *     summary="Recharge the user's Visa card",
+     *     tags={"Wallet"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="card_number", type="string"),
+     *             @OA\Property(property="expiration_date", type="string"),
+     *             @OA\Property(property="cvv", type="string"),
+     *             @OA\Property(property="amount", type="number")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Card recharged successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
+     */
+    public function rechargeCard(Request $request)
+    {
+
+        $this->validate($request, [
+            'card_number' => 'required|string',
+            'expiration_date' => 'required|string',
+            'cvv' => 'required|string',
+            'amount' => 'required|numeric|min:1',
+        ]);
+        if (Auth::check()) {
+            $user = Auth::user();
+            $amount = $request->amount;
+            $card_number = $request->card_number;
+            User::where('id', $user->id)->update([
+                "wallet_balance" => $user->wallet_balance + $amount,
+                "card_number" => $card_number,
+                "expiration_date" => $request->expiration_date,
+                "cvv" => $request->cvv
+            ]);
+    
+            // Enregistrer l'opération de recharge dans la table des opérations
+            $this->recordOperation($user->id, 'Card recharged', $card_number, $amount);
+    
+            return response()->json(['message' => 'Card recharged successfully'], 200);
+        } else {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+    }
+
+    /**
+     * Make a payment using the user's Visa card.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Post(
+     *     path="/api/wallet/pay-with-card",
+     *     summary="Make a payment using the user's Visa card",
+     *     tags={"Wallet"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="card_number", type="string"),
+     *             @OA\Property(property="expiration_date", type="string"),
+     *             @OA\Property(property="cvv", type="string"),
+     *             @OA\Property(property="amount", type="number")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Payment successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
+     */
+    public function payWithCard(Request $request)
+    {
+
+        $this->validate($request, [
+            'card_number' => 'required|string',
+            'expiration_date' => 'required|string',
+            'cvv' => 'required|string',
+            'amount' => 'required|numeric|min:1',
+        ]);
+        $user = Auth::user();
+        $amount = $request->amount;
+        $card_number = $request->card_number;
+        // Vérifier si l'utilisateur a suffisamment de solde
+        if ($user->wallet_balance >= $amount) {
+            // Débiter le montant du portefeuille de l'utilisateur
+            
+            User::where('id', $user->id)->update([
+                "wallet_balance" => $user->wallet_balance - $amount,
+                "card_number" => $request->card_number,
+                "expiration_date" => $request->expiration_date,
+                "cvv" => $request->cvv
+            ]);
+            // Enregistrer l'opération de paiement dans la table des opérations
+            $this->recordOperation($user->id, 'Payment Card', $amount,$card_number);
+
+            return response()->json(['message' => 'Payment successful'], 200);
+        } else {
+            return response()->json(['message' => 'Insufficient balance'], 400);
+        }
+   }
+       /**
+     * Recharge the user's Visa card using mobile money.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Post(
+     *     path="/api/wallet/recharge-mobile-money",
+     *     summary="Recharge the user's Visa card using mobile money",
+     *     tags={"Wallet"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="mobile_money_number", type="string"),
+     *             @OA\Property(property="amount", type="number")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Card recharged successfully using mobile money",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
+     */
+    public function rechargeMobileMoney(Request $request)
+    {
+
+        $this->validate($request, [
+            'mobile_money_number' => 'required|string',
+            'amount' => 'required|numeric|min:1',
+        ]);
+        if (Auth::check()) {
+            $user = Auth::user();
+            $amount = $request->amount;
+            $card_number = $request->telephone;
+            User::where('id', $user->id)->update([
+                "wallet_balance" => $user->wallet_balance + $amount,
+                "mobile_money_number" => $card_number,
+
+            ]);
+    
+            // Enregistrer l'opération de recharge dans la table des opérations
+            $this->recordOperation($user->id, 'Reload using mobile money', $card_number,$amount);
+    
+            return response()->json(['message' => 'Card recharged successfully using mobile money'], 200);
+        } else {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+    }
+    // Enregistrer une opération dans la table des opérations
+    private function recordOperation($userId, $type, $amount,  $card_number = null, $recipientId = null)
+    {
+
+        Operation::create([
+            "user_id" => $userId,
+            "type" => $type,
+            "amount" => $amount,
+            "card_number" => $card_number,
+            "recipient_id" => $recipientId
+        ]);
     }
 
 }

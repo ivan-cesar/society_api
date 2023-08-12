@@ -21,19 +21,40 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // Début Inscription et Connexion
-Route::post('/utilisateur/inscription', [UserController::class, "inscription"]);
-Route::post('/utilisateur/connexion', [UserController::class, "connexion"]);
+Route::prefix('user')->group(function () {
+    Route::post('/inscription', [UserController::class, "inscription"]);
+    Route::post('/connexion', [UserController::class, "connexion"]); 
+});
 // Fin
 Route::get('api/v1/docs', 'App\Http\Controllers\SwaggerController@index');
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/reload-wallet', [WalletController::class, 'reload']);
-    Route::post('/transfer-money', [WalletController::class, 'transfer']);
-    Route::post('/pay', [WalletController::class, 'pay']);
+    Route::prefix('wallet')->group(function () {
+        Route::post('/reload', [WalletController::class, 'reload']);
+        Route::post('/transfer', [WalletController::class, 'transfer']);
+        Route::post('/pay', [WalletController::class, 'pay']);
+        Route::post('/associate-card', [WalletController::class, 'associateCard']);
+        Route::post('/recharge-card', [WalletController::class, 'rechargeCard']);
+        Route::post('/pay-with-card', [WalletController::class, 'payWithCard']);
+        Route::post('/recharge-mobile-money', [WalletController::class, 'rechargeMobileMoney']);
+
+    });
+
     Route::get('/operations', [OperationsController::class, 'index']);
-    Route::post('/claim', [ClaimController::class, 'create']);
-    Route::get('/claim', [ClaimController::class, 'index']);
-    Route::get('/clients', [AdminController::class, 'getClients']);
+
+    Route::prefix('user')->group(function () {
+        Route::post('/claims', [ClaimController::class, 'create']);
+        Route::get('/claims', [ClaimController::class, 'index']);
+    });
+    Route::prefix('admin')->group(function (){
+        Route::get('/claims/{claimId}', [ClaimController::class, 'show']);
+        Route::get('/clients', [AdminController::class, 'getClients']);
+        Route::get('/claims/{claimId}', [AdminController::class, 'handleClaim']);
+        Route::get('/claims', [AdminController::class, 'index']);
+
+    });
+
+    
 });
 

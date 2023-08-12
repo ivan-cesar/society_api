@@ -44,7 +44,7 @@ class UserController extends Controller
      * Register a new user.
      *
      * @OA\Post(
-     *     path="/user/inscription",
+     *     path="/api/user/inscription",
      *     summary="Register a new user",
      *     tags={"User"},
      *     @OA\RequestBody(
@@ -82,7 +82,7 @@ class UserController extends Controller
      * User login.
      *
      * @OA\Post(
-     *     path="/user/connexion",
+     *     path="/api/user/connexion",
      *     summary="User login",
      *     tags={"User"},
      *     @OA\RequestBody(

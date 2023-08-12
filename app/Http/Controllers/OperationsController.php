@@ -27,7 +27,7 @@ class OperationsController extends Controller
      * Get the list of operations for the authenticated user.
      *
      * @OA\Get(
-     *     path="/operations",
+     *     path="/api/operations",
      *     summary="Get the list of operations",
      *     tags={"Operations"},
      *     security={{"bearerAuth": {}}},
@@ -47,52 +47,6 @@ class OperationsController extends Controller
         $user = Auth::user();
         $operations = Operation::where('user_id', $user->id)->get();
         return response()->json(['operations' => $operations], 200);
-    }
-    /**
-     * Create a new operation.
-     *
-     * @OA\Post(
-     *     path="/operations",
-     *     summary="Create a new operation",
-     *     tags={"Operations"},
-     *     security={{"bearerAuth": {}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="type", type="string"),
-     *             @OA\Property(property="amount", type="number")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Operation recorded successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string")
-     *         )
-     *     ),
-     *     @OA\Response(response=400, description="Bad request"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
-     */
-
-    // Enregistrer une nouvelle opération
-    public function create(Request $request)
-    {
-        $this->validate($request, [
-            'type' => 'required|string',
-            'amount' => 'required|numeric|min:0',
-        ]);
-
-        $user = Auth::user();
-
-        // Enregistrer l'opération dans la base de données
-        $operation = new Operation();
-        $operation->user_id = $user->id;
-        $operation->type = $request->type;
-        $operation->amount = $request->amount;
-        $operation->save();
-
-        return response()->json(['message' => 'Operation recorded successfully'], 201);
     }
 
 }
